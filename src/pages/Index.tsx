@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TVConfigurator } from '@/components/TVConfigurator';
 import { AppointmentBooking } from '@/components/AppointmentBooking';
@@ -12,6 +11,7 @@ export interface TVConfig {
   brand: string;
   wallMount: string;
   customMount: boolean;
+  wallType: string;
 }
 
 export interface AppointmentData {
@@ -35,7 +35,8 @@ const Index = () => {
     size: '55',
     brand: 'Samsung',
     wallMount: 'tilting',
-    customMount: false
+    customMount: false,
+    wallType: 'drywall'
   });
   const [appointmentData, setAppointmentData] = useState<AppointmentData>({
     date: '',
@@ -73,7 +74,8 @@ const Index = () => {
       size: '55',
       brand: 'Samsung',
       wallMount: 'tilting',
-      customMount: false
+      customMount: false,
+      wallType: 'drywall'
     });
     setAppointmentData({
       date: '',

@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Info } from 'lucide-react';
 import { TVConfig } from '@/pages/Index';
 
 interface TVConfiguratorProps {
@@ -50,10 +49,49 @@ const WALL_MOUNTS = [
   }
 ];
 
+const WALL_TYPES = [
+  {
+    type: 'drywall',
+    name: 'Drywall',
+    description: 'Standard drywall construction',
+    additionalFee: 0,
+    note: 'Most common wall type'
+  },
+  {
+    type: 'brick',
+    name: 'Brick/Masonry',
+    description: 'Solid brick or concrete block',
+    additionalFee: 50,
+    note: 'Requires masonry drill bits'
+  },
+  {
+    type: 'concrete',
+    name: 'Concrete',
+    description: 'Poured concrete wall',
+    additionalFee: 75,
+    note: 'Requires special drilling equipment'
+  },
+  {
+    type: 'metal_studs',
+    name: 'Metal Studs',
+    description: 'Metal stud framing',
+    additionalFee: 25,
+    note: 'May require toggle bolts'
+  },
+  {
+    type: 'plaster',
+    name: 'Plaster',
+    description: 'Traditional plaster over lath',
+    additionalFee: 30,
+    note: 'Older construction, requires care'
+  }
+];
+
 export const TVConfigurator = ({ config, onConfigChange, onNext, onBack }: TVConfiguratorProps) => {
   const [selectedTVSize, setSelectedTVSize] = useState(config.size);
   const [selectedMount, setSelectedMount] = useState(config.wallMount);
   const [customMount, setCustomMount] = useState(config.customMount);
+  const [selectedWallType, setSelectedWallType] = useState(config.wallType);
 
   const getCompatibleMounts = () => {
     const tvSize = parseInt(selectedTVSize);
@@ -75,21 +113,24 @@ export const TVConfigurator = ({ config, onConfigChange, onNext, onBack }: TVCon
       size: selectedTVSize,
       brand: config.brand,
       wallMount: selectedMount,
-      customMount
+      customMount,
+      wallType: selectedWallType
     });
     onNext();
   };
 
   const selectedTVData = TV_SIZES.find(tv => tv.size === selectedTVSize);
   const selectedMountData = WALL_MOUNTS.find(mount => mount.type === selectedMount);
-  const totalPrice = (selectedTVData?.price || 0) + (customMount ? 0 : selectedMountData?.price || 0);
+  const selectedWallTypeData = WALL_TYPES.find(wall => wall.type === selectedWallType);
+  const wallTypeFee = selectedWallTypeData?.additionalFee || 0;
+  const totalPrice = (selectedTVData?.price || 0) + (customMount ? 0 : selectedMountData?.price || 0) + wallTypeFee;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Configure Your TV Setup</h2>
-          <p className="text-gray-600">Choose your TV size and mounting option for the perfect installation</p>
+          <p className="text-gray-600">Choose your TV size, mounting option, and wall type for the perfect installation</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -118,6 +159,49 @@ export const TVConfigurator = ({ config, onConfigChange, onNext, onBack }: TVCon
                         <div className="text-2xl font-bold">{tv.size}"</div>
                         <div className="text-sm text-gray-600">{tv.weight}</div>
                         <div className="text-sm font-medium text-green-600">${tv.price}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Wall Type Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <span>Wall Type</span>
+                  <Badge variant="secondary">Required</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {WALL_TYPES.map((wall) => (
+                    <button
+                      key={wall.type}
+                      onClick={() => setSelectedWallType(wall.type)}
+                      className={`w-full p-4 border-2 rounded-lg text-left transition-all ${
+                        selectedWallType === wall.type
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-semibold">{wall.name}</div>
+                          <div className="text-sm text-gray-600 mt-1">{wall.description}</div>
+                          <div className="text-xs text-blue-600 mt-1 flex items-center">
+                            <Info className="h-3 w-3 mr-1" />
+                            {wall.note}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          {wall.additionalFee > 0 ? (
+                            <div className="text-sm font-medium text-orange-600">+${wall.additionalFee}</div>
+                          ) : (
+                            <div className="text-sm text-green-600">Included</div>
+                          )}
+                        </div>
                       </div>
                     </button>
                   ))}
@@ -193,9 +277,21 @@ export const TVConfigurator = ({ config, onConfigChange, onNext, onBack }: TVCon
                 </div>
                 
                 <div className="flex justify-between">
+                  <span>Wall Type:</span>
+                  <span className="font-medium">{selectedWallTypeData?.name}</span>
+                </div>
+                
+                <div className="flex justify-between">
                   <span>Installation:</span>
                   <span className="font-medium">${selectedTVData?.price}</span>
                 </div>
+                
+                {wallTypeFee > 0 && (
+                  <div className="flex justify-between">
+                    <span>Wall Type Fee:</span>
+                    <span className="font-medium">${wallTypeFee}</span>
+                  </div>
+                )}
                 
                 {!customMount && (
                   <div className="flex justify-between">
