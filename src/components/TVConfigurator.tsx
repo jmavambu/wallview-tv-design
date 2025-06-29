@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Info } from 'lucide-react';
 import { TVConfig } from '@/pages/Index';
 
@@ -15,10 +17,16 @@ interface TVConfiguratorProps {
 
 const TV_SIZES = [
   { size: '32', price: 99, weight: '15-20 lbs' },
+  { size: '40', price: 119, weight: '18-25 lbs' },
   { size: '43', price: 129, weight: '20-30 lbs' },
+  { size: '50', price: 139, weight: '25-35 lbs' },
   { size: '55', price: 149, weight: '30-40 lbs' },
+  { size: '60', price: 159, weight: '35-45 lbs' },
   { size: '65', price: 179, weight: '40-55 lbs' },
+  { size: '70', price: 189, weight: '50-65 lbs' },
   { size: '75', price: 199, weight: '55-70 lbs' },
+  { size: '77', price: 209, weight: '60-75 lbs' },
+  { size: '82', price: 229, weight: '65-80 lbs' },
   { size: '85', price: 249, weight: '70-90 lbs' }
 ];
 
@@ -52,38 +60,24 @@ const WALL_MOUNTS = [
 const WALL_TYPES = [
   {
     type: 'drywall',
-    name: 'Drywall',
-    description: 'Standard drywall construction',
+    name: '🏠 Drywall',
+    description: 'Standard wall',
     additionalFee: 0,
     note: 'Most common wall type'
   },
   {
     type: 'brick',
-    name: 'Brick/Masonry',
-    description: 'Solid brick or concrete block',
+    name: '🧱 Brick/Stone',
+    description: 'Masonry wall',
     additionalFee: 50,
     note: 'Requires masonry drill bits'
   },
   {
     type: 'concrete',
-    name: 'Concrete',
-    description: 'Poured concrete wall',
+    name: '🏗️ Concrete',
+    description: 'Concrete wall',
     additionalFee: 75,
     note: 'Requires special drilling equipment'
-  },
-  {
-    type: 'metal_studs',
-    name: 'Metal Studs',
-    description: 'Metal stud framing',
-    additionalFee: 25,
-    note: 'May require toggle bolts'
-  },
-  {
-    type: 'plaster',
-    name: 'Plaster',
-    description: 'Traditional plaster over lath',
-    additionalFee: 30,
-    note: 'Older construction, requires care'
   }
 ];
 
@@ -144,25 +138,30 @@ export const TVConfigurator = ({ config, onConfigChange, onNext, onBack }: TVCon
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {TV_SIZES.map((tv) => (
-                    <button
-                      key={tv.size}
-                      onClick={() => setSelectedTVSize(tv.size)}
-                      className={`p-4 border-2 rounded-lg transition-all ${
-                        selectedTVSize === tv.size
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="text-2xl font-bold">{tv.size}"</div>
-                        <div className="text-sm text-gray-600">{tv.weight}</div>
-                        <div className="text-sm font-medium text-green-600">${tv.price}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                <Select value={selectedTVSize} onValueChange={setSelectedTVSize}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select TV size" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                    {TV_SIZES.map((tv) => (
+                      <SelectItem key={tv.size} value={tv.size}>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="font-medium">{tv.size}" TV</span>
+                          <div className="text-sm text-gray-600 ml-4">
+                            {tv.weight} • ${tv.price}
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedTVData && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                    <div className="text-sm text-blue-800">
+                      <strong>{selectedTVData.size}" TV</strong> • Weight: {selectedTVData.weight} • Installation: ${selectedTVData.price}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
