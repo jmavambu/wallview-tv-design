@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Tv, Phone, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Tv, Phone, Mail, User } from 'lucide-react';
 
 export const Header = () => {
   return (
@@ -12,14 +14,34 @@ export const Header = () => {
             <span className="text-2xl font-bold text-gray-900">MountPro</span>
           </div>
           
-          <div className="hidden md:flex items-center space-x-6">
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Phone className="h-4 w-4" />
-              <span>(555) 123-4567</span>
+          <div className="flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-6">
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Phone className="h-4 w-4" />
+                <span>(555) 123-4567</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Mail className="h-4 w-4" />
+                <span>info@mountpro.com</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 text-gray-600">
-              <Mail className="h-4 w-4" />
-              <span>info@mountpro.com</span>
+            
+            <div className="flex items-center space-x-3">
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm">
+                  Sign Up
+                </Button>
+              </Link>
+              <Link to="/profile">
+                <Button variant="outline" size="sm">
+                  <User className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
